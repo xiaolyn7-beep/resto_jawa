@@ -1,49 +1,50 @@
 <?php
-require "koneksi.php";
-require "fungsi.php";
-wajib_admin();
+session_start();
+if (!isset($_SESSION["status_login"]) || $_SESSION["status_login"] !== true) { header("Location: index.php"); exit(); }
+include "koneksi.php";
 
 $stmt = $connection->prepare("SELECT * FROM menu WHERE id_menu = ?");
 $stmt->bind_param("i", $_GET['id']);
 $stmt->execute();
 $data = $stmt->get_result()->fetch_assoc();
 $stmt->close();
-if (!$data) { header("Location: dashboard.php"); exit(); }
-$img = url_gambar($data['gambar']);
-if (!empty($_GET['error'])) $_SESSION['flash'] = ['danger', $_GET['error']];
-$judul = 'Edit Menu'; $halaman_aktif = 'menu';
-include "layout_atas.php";
 ?>
-<div class="panel" style="max-width:640px">
-    <div class="panel-title">Edit Menu Khas Jawa</div>
-    <form action="proses_edit.php" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="id_menu" value="<?= (int)$data['id_menu'] ?>">
-        <div class="mb-3"><label class="form-label">Nama Makanan/Minuman</label><input type="text" name="nama_makanan" class="form-control" value="<?= e($data['nama_makanan']) ?>" required maxlength="100"></div>
-        <div class="mb-3"><label class="form-label">Kategori</label>
-            <select name="kategori" class="form-select"><?php foreach (KATEGORI_MENU as $k): ?><option <?= $data['kategori'] === $k ? 'selected' : '' ?>><?= e($k) ?></option><?php endforeach; ?></select></div>
-        <div class="row">
-            <div class="col-6 mb-3"><label class="form-label">Harga (Rp)</label><input type="number" name="harga" min="0" class="form-control" value="<?= (int)$data['harga'] ?>" required></div>
-            <div class="col-6 mb-3"><label class="form-label">Stok</label><input type="number" name="stok" min="0" class="form-control" value="<?= (int)$data['stok'] ?>" required></div>
-        </div>
-        <div class="mb-3"><label class="form-label">Deskripsi</label><textarea name="deskripsi" class="form-control" rows="2"><?= e($data['deskripsi']) ?></textarea></div>
-        <div class="mb-3">
-            <label class="form-label">Gambar Menu</label>
-            <div class="mb-2">
-                <img id="preview" <?= $img ? 'src="' . e($img) . '"' : 'style="display:none"' ?> class="img-thumbnail" style="max-height:160px" alt="">
-                <?php if (!$img): ?><div id="belum" class="text-muted small">Belum ada gambar.</div><?php endif; ?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Menu</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning"><h5 class="mb-0">Edit Menu Khas Jawa</h5></div>
+                <div class="card-body">
+                    <form action="proses_edit.php" method="POST">
+                        <input type="hidden" name="id_menu" value="<?php echo $data['id_menu']; ?>">
+                        <div class="mb-3"><label class="form-label">Nama Restoran</label><input type="text" name="nama_restoran" class="form-control" value="<?php echo htmlspecialchars($data['nama_restoran']); ?>" required></div>
+                        <div class="mb-3"><label class="form-label">Nama Makanan/Minuman</label><input type="text" name="nama_makanan" class="form-control" value="<?php echo htmlspecialchars($data['nama_makanan']); ?>" required></div>
+                        <div class="mb-3">
+                            <label class="form-label">Kategori</label>
+                            <select name="kategori" class="form-select">
+                                <option value="Makanan" <?php echo ($data['kategori']=='Makanan')?'selected':''; ?>>Makanan</option>
+                                <option value="Minuman" <?php echo ($data['kategori']=='Minuman')?'selected':''; ?>>Minuman</option>
+                                <option value="Cemilan" <?php echo ($data['kategori']=='Cemilan')?'selected':''; ?>>Cemilan</option>
+                            </select>
+                        </div>
+                        <div class="mb-3"><label class="form-label">Harga (Rp)</label><input type="number" name="harga" class="form-control" value="<?php echo $data['harga']; ?>" required></div>
+                        <div class="mb-3"><label class="form-label">Stok</label><input type="number" name="stok" class="form-control" value="<?php echo $data['stok']; ?>" required></div>
+                        <div class="mb-3"><label class="form-label">Deskripsi</label><textarea name="deskripsi" class="form-control" rows="2"><?php echo htmlspecialchars($data['deskripsi']); ?></textarea></div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        <a href="dashboard.php" class="btn btn-secondary">Batal</a>
+                    </form>
+                </div>
             </div>
-            <input type="file" name="gambar" id="gambar" class="form-control" accept="image/jpeg,image/png,image/webp">
-            <small class="text-muted">Pilih file baru untuk mengganti gambar (JPG/PNG/WEBP, maks 2 MB).</small>
-            <?php if ($img): ?><div class="form-check mt-2"><input class="form-check-input" type="checkbox" name="hapus_gambar" value="1" id="hg"><label class="form-check-label" for="hg">Hapus gambar saat ini</label></div><?php endif; ?>
         </div>
-        <button type="submit" class="btn btn-or">Update</button>
-        <a href="dashboard.php" class="btn btn-soft">Batal</a>
-    </form>
+    </div>
 </div>
-<script>
-document.getElementById('gambar').addEventListener('change', function () {
-    const p = document.getElementById('preview'), b = document.getElementById('belum');
-    if (this.files[0]) { p.src = URL.createObjectURL(this.files[0]); p.style.display = 'block'; if (b) b.style.display = 'none'; }
-});
-</script>
-<?php include "layout_bawah.php"; ?>
+</body>
+</html>

@@ -1,18 +1,11 @@
 <?php
-require "koneksi.php";
-require "fungsi.php";
-wajib_admin();
+session_start();
+if (!isset($_SESSION["status_login"]) || $_SESSION["status_login"] !== true) { header("Location: index.php"); exit(); }
+include "koneksi.php";
 
-$kategori = in_array($_POST['kategori'] ?? '', KATEGORI_MENU, true) ? $_POST['kategori'] : 'Makanan';
-$harga = max(0, (int)$_POST['harga']);
-$stok  = max(0, (int)$_POST['stok']);
+$stmt = $connection->prepare("INSERT INTO menu (nama_restoran, nama_makanan, kategori, harga, stok, deskripsi) VALUES (?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sssiis", $_POST['nama_restoran'], $_POST['nama_makanan'], $_POST['kategori'], $_POST['harga'], $_POST['stok'], $_POST['deskripsi']);
 
-$error = '';
-$gambar = simpan_gambar($_FILES['gambar'] ?? null, $error);
-if ($gambar === false) { header("Location: tambah_menu.php?error=" . urlencode($error)); exit(); }
-
-$stmt = $connection->prepare("INSERT INTO menu (nama_makanan, kategori, harga, stok, deskripsi, gambar) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssiiss", $_POST['nama_makanan'], $kategori, $harga, $stok, $_POST['deskripsi'], $gambar);
-$stmt->execute();
+if ($stmt->execute()) { header("Location: dashboard.php?pesan=tambah"); }
 $stmt->close();
-header("Location: dashboard.php?pesan=tambah");
+?>
