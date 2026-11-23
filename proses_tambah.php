@@ -1,11 +1,22 @@
 <?php
 session_start();
-if (!isset($_SESSION["status_login"]) || $_SESSION["status_login"] !== true) { header("Location: index.php"); exit(); }
+if (!isset($_SESSION["status_login"]) || $_SESSION["role"] != "admin") {
+    header("Location: index.php");
+    exit();
+}
 include "koneksi.php";
+include "upload.php";
 
-$stmt = $connection->prepare("INSERT INTO menu (nama_restoran, nama_makanan, kategori, harga, stok, deskripsi) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("sssiis", $_POST['nama_restoran'], $_POST['nama_makanan'], $_POST['kategori'], $_POST['harga'], $_POST['stok'], $_POST['deskripsi']);
+$error  = '';
+$gambar = upload_gambar($_FILES['gambar'] ?? null, $error);
+if ($gambar === false) {
+    header("Location: tambah_menu.php?error=" . urlencode($error));
+    exit();
+}
 
-if ($stmt->execute()) { header("Location: dashboard.php?pesan=tambah"); }
-$stmt->close();
+$stmt = mysqli_prepare($connection, "INSERT INTO menu (nama_restoran, nama_makanan, kategori, harga, stok, deskripsi, gambar) VALUES (?, ?, ?, ?, ?, ?, ?)");
+mysqli_stmt_bind_param($stmt, "sssiiss", $_POST['nama_restoran'], $_POST['nama_makanan'], $_POST['kategori'], $_POST['harga'], $_POST['stok'], $_POST['deskripsi'], $gambar);
+
+if (mysqli_stmt_execute($stmt)) { header("Location: dashboard.php?pesan=tambah"); }
+mysqli_stmt_close($stmt);
 ?>

@@ -1,6 +1,6 @@
 <?php
-$connection = new mysqli("localhost", "root", "", "db_resto_projek");
-if ($connection->connect_error) {
-    die("Koneksi basis data gagal: " . $connection->connect_error);
+$connection = mysqli_connect("localhost", "root", "", "db_resto_projek");
+if (!$connection) {
+    die("Koneksi basis data gagal: " . mysqli_connect_error());
 }
 ?>
