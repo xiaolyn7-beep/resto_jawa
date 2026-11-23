@@ -87,7 +87,7 @@ $halaman = 'akun';
             <form method="POST" class="row g-2">
                 <input type="hidden" name="aksi" value="tambah">
                 <div class="col-md-4"><input type="text" name="username" class="form-control" placeholder="Username" required></div>
-                <div class="col-md-3"><input type="password" name="password" class="form-control" placeholder="Password (min. 6)" required></div>
+                <div class="col-md-3"><input type="password" name="password" class="form-control" placeholder="Password (min. 6)" minlength="6" required></div>
                 <div class="col-md-3">
                     <select name="role" class="form-select">
                         <option value="kasir">Kasir</option>

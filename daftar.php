@@ -35,7 +35,7 @@ if ($data['jumlah'] > 0) {
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Password</label>
-                            <input type="password" name="password" class="form-control" minlength="8" required>
+                            <input type="password" name="password" class="form-control" minlength="6" required>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Daftar</button>
                     </form>
