@@ -8,7 +8,7 @@ if ($_SESSION['role'] == 'admin') {
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="<?php echo $beranda; ?>">Nusantara Food Hub</a>
+        <a class="navbar-brand fw-bold" href="<?php echo $beranda; ?>">Jawa Food Hub</a>
         <div class="navbar-nav me-auto">
             <?php if ($_SESSION['role'] == 'admin'): ?>
                 <a class="nav-link <?php if ($halaman == 'menu') echo 'active'; ?>" href="dashboard.php">Kelola Menu</a>
