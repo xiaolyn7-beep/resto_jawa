@@ -56,10 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($diriSendiri) {
             $notif = "Anda tidak bisa menghapus akun yang sedang dipakai."; $tipe = 'danger';
         } else {
+            // Riwayat pesanan tetap tersimpan (id_kasir otomatis menjadi NULL)
             $st = mysqli_prepare($connection, "DELETE FROM users WHERE username = ?");
             mysqli_stmt_bind_param($st, "s", $username);
             mysqli_stmt_execute($st); mysqli_stmt_close($st);
-            $notif = "Akun $username dihapus.";
+            $notif = "Akun $username dihapus. Riwayat pesanannya tetap tersimpan.";
         }
     }
 }
@@ -72,7 +73,7 @@ $halaman = 'akun';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Kelola Akun - Jawa Food</title>
+    <title>Kelola Akun - Nusantara Food</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
 <body class="bg-light">
@@ -87,7 +88,7 @@ $halaman = 'akun';
             <form method="POST" class="row g-2">
                 <input type="hidden" name="aksi" value="tambah">
                 <div class="col-md-4"><input type="text" name="username" class="form-control" placeholder="Username" required></div>
-                <div class="col-md-3"><input type="password" name="password" class="form-control" placeholder="Password (min. 6)" minlength="6" required></div>
+                <div class="col-md-3"><input type="password" name="password" class="form-control" placeholder="Password (min. 6)" required></div>
                 <div class="col-md-3">
                     <select name="role" class="form-select">
                         <option value="kasir">Kasir</option>
@@ -123,7 +124,7 @@ $halaman = 'akun';
                         <td class="d-flex gap-1">
                             <button form="f<?php echo $i; ?>" class="btn btn-primary btn-sm">Simpan</button>
                             <?php if (!$saya): ?>
-                            <form method="POST" onsubmit="return confirm('Hapus akun ini?');">
+                            <form method="POST" onsubmit="return confirm('Hapus akun ini? Riwayat pesanannya tetap tersimpan.');">
                                 <input type="hidden" name="aksi" value="hapus">
                                 <input type="hidden" name="username" value="<?php echo htmlspecialchars($u['username']); ?>">
                                 <button class="btn btn-danger btn-sm">Hapus</button>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2026 at 12:06 AM
+-- Generation Time: Nov 24, 2026 at 07:23 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -82,7 +82,7 @@ INSERT INTO `menu` (`id_menu`, `nama_restoran`, `nama_makanan`, `kategori`, `har
 CREATE TABLE `pesanan` (
   `id_pesanan` int(11) NOT NULL,
   `kode_pesanan` varchar(30) NOT NULL DEFAULT '',
-  `kasir` varchar(100) NOT NULL,
+  `id_kasir` int(11) DEFAULT NULL,
   `nama_pelanggan` varchar(100) NOT NULL DEFAULT 'Umum',
   `total` int(11) NOT NULL,
   `metode_bayar` varchar(20) NOT NULL,
@@ -96,9 +96,9 @@ CREATE TABLE `pesanan` (
 -- Dumping data for table `pesanan`
 --
 
-INSERT INTO `pesanan` (`id_pesanan`, `kode_pesanan`, `kasir`, `nama_pelanggan`, `total`, `metode_bayar`, `uang_bayar`, `kembalian`, `status`, `tanggal`) VALUES
-(1, 'INV-20261123-0001', 'xiaoar', 'coba', 20000, 'QRIS', 20000, 0, 'Lunas', '2026-11-23 22:09:11'),
-(2, 'INV-20261123-0002', 'xiaoar', 'lol', 55000, 'Tunai', 100000, 45000, 'Lunas', '2026-11-24 03:24:21');
+INSERT INTO `pesanan` (`id_pesanan`, `kode_pesanan`, `id_kasir`, `nama_pelanggan`, `total`, `metode_bayar`, `uang_bayar`, `kembalian`, `status`, `tanggal`) VALUES
+(1, 'INV-20261123-0001', 2, 'coba', 20000, 'QRIS', 20000, 0, 'Lunas', '2026-11-23 22:09:11'),
+(2, 'INV-20261123-0002', 2, 'lol', 55000, 'Tunai', 100000, 45000, 'Lunas', '2026-11-24 03:24:21');
 
 -- --------------------------------------------------------
 
@@ -119,7 +119,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `created_at`, `role`) VALUES
-(2, 'xiaoar', '$2y$10$7zeZgiVKU828dGRueKshiOFx.J6XiV60D88oRXhTzLtFSsQ.3yv/m', '2026-11-23 15:07:59', 'kasir');
+(2, 'xiaoar', '$2y$10$7zeZgiVKU828dGRueKshiOFx.J6XiV60D88oRXhTzLtFSsQ.3yv/m', '2026-11-23 15:07:59', 'kasir'),
+(3, 'admin', '$2y$10$3UnZBf2tUzYKJ1LBMzDqAOkrLaEnjOeqyOvhFTfSXsFo/hLgciPAW', '2026-11-23 23:23:39', 'admin'),
+(4, 'gfgfg', '$2y$10$XiISzvuMXChnz.f7gy12LOFmYn0nji8jdl0l1DHNPTPiVGwB4jZQO', '2026-11-23 23:26:17', 'kasir'),
+(5, 'gfgfgfg', '$2y$10$dh7LEELQU5P4d4IY3dW/vOhE4kOv0eyJvvOKHOhLeXRedsAiO3wF6', '2026-11-23 23:30:03', 'kasir');
 
 --
 -- Indexes for dumped tables
@@ -130,7 +133,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `created_at`, `role`) VALUES
 --
 ALTER TABLE `detail_pesanan`
   ADD PRIMARY KEY (`id_detail`),
-  ADD KEY `id_pesanan` (`id_pesanan`);
+  ADD KEY `id_pesanan` (`id_pesanan`),
+  ADD KEY `fk_detail_menu` (`id_menu`);
 
 --
 -- Indexes for table `menu`
@@ -142,7 +146,8 @@ ALTER TABLE `menu`
 -- Indexes for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  ADD PRIMARY KEY (`id_pesanan`);
+  ADD PRIMARY KEY (`id_pesanan`),
+  ADD KEY `fk_pesanan_kasir` (`id_kasir`);
 
 --
 -- Indexes for table `users`
@@ -177,7 +182,7 @@ ALTER TABLE `pesanan`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
@@ -187,7 +192,14 @@ ALTER TABLE `users`
 -- Constraints for table `detail_pesanan`
 --
 ALTER TABLE `detail_pesanan`
-  ADD CONSTRAINT `detail_pesanan_ibfk_1` FOREIGN KEY (`id_pesanan`) REFERENCES `pesanan` (`id_pesanan`) ON DELETE CASCADE;
+  ADD CONSTRAINT `detail_pesanan_ibfk_1` FOREIGN KEY (`id_pesanan`) REFERENCES `pesanan` (`id_pesanan`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_detail_menu` FOREIGN KEY (`id_menu`) REFERENCES `menu` (`id_menu`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `pesanan`
+--
+ALTER TABLE `pesanan`
+  ADD CONSTRAINT `fk_pesanan_kasir` FOREIGN KEY (`id_kasir`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

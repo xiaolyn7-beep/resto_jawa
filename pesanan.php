@@ -7,8 +7,8 @@ if (!isset($_SESSION["status_login"]) || $_SESSION["role"] != "kasir") {
 include "koneksi.php";
 
 $tgl = $_GET['tanggal'] ?? date('Y-m-d');
-$st = mysqli_prepare($connection, "SELECT * FROM pesanan WHERE DATE(tanggal) = ? AND kasir = ? ORDER BY id_pesanan DESC");
-mysqli_stmt_bind_param($st, "ss", $tgl, $_SESSION['username']);
+$st = mysqli_prepare($connection, "SELECT pesanan.*, users.username AS kasir FROM pesanan JOIN users ON users.id = pesanan.id_kasir WHERE DATE(pesanan.tanggal) = ? AND pesanan.id_kasir = ? ORDER BY pesanan.id_pesanan DESC");
+mysqli_stmt_bind_param($st, "si", $tgl, $_SESSION['id_user']);
 mysqli_stmt_execute($st);
 $hasil = mysqli_stmt_get_result($st);
 $pesanan = array();
@@ -20,8 +20,8 @@ $total = array_sum(array_column($pesanan, 'total'));
 
 $sukses = null;
 if (isset($_GET['sukses'])) {
-    $s = mysqli_prepare($connection, "SELECT * FROM pesanan WHERE id_pesanan = ? AND kasir = ?");
-    mysqli_stmt_bind_param($s, "is", $_GET['sukses'], $_SESSION['username']);
+    $s = mysqli_prepare($connection, "SELECT * FROM pesanan WHERE id_pesanan = ? AND id_kasir = ?");
+    mysqli_stmt_bind_param($s, "ii", $_GET['sukses'], $_SESSION['id_user']);
     mysqli_stmt_execute($s);
     $sukses = mysqli_fetch_assoc(mysqli_stmt_get_result($s));
     mysqli_stmt_close($s);
@@ -33,7 +33,7 @@ $halaman = 'pesanan';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pesanan - Jawa Food</title>
+    <title>Pesanan - Nusantara Food</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
 <body class="bg-light">

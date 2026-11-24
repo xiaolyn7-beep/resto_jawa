@@ -33,7 +33,7 @@ while ($baris = mysqli_fetch_assoc($hasil)) {
 }
 mysqli_stmt_close($st);
 
-$st = mysqli_prepare($connection, "SELECT * FROM pesanan WHERE DATE(tanggal) BETWEEN ? AND ? ORDER BY id_pesanan DESC");
+$st = mysqli_prepare($connection, "SELECT pesanan.*, COALESCE(users.username, '(akun dihapus)') AS kasir FROM pesanan LEFT JOIN users ON users.id = pesanan.id_kasir WHERE DATE(pesanan.tanggal) BETWEEN ? AND ? ORDER BY pesanan.id_pesanan DESC");
 mysqli_stmt_bind_param($st, "ss", $dari, $sampai);
 mysqli_stmt_execute($st);
 $hasil = mysqli_stmt_get_result($st);
@@ -50,7 +50,7 @@ $halaman = 'laporan';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Laporan Pesanan - Jawa Food</title>
+    <title>Laporan Pesanan - Nusantara Food</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <style>@media print { nav, .no-print { display: none !important; } .collapse { display: table-row !important; } }</style>
 </head>

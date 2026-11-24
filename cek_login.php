@@ -5,7 +5,7 @@ include "koneksi.php";
 $username      = $_POST["username"];
 $password_asli = $_POST["password"];
 
-$stmt = mysqli_prepare($connection, "SELECT password, role FROM users WHERE username = ?");
+$stmt = mysqli_prepare($connection, "SELECT id, password, role FROM users WHERE username = ?");
 mysqli_stmt_bind_param($stmt, "s", $username);
 mysqli_stmt_execute($stmt);
 $hasil = mysqli_stmt_get_result($stmt);
@@ -15,6 +15,7 @@ mysqli_stmt_close($stmt);
 if ($user && password_verify($password_asli, $user['password'])) {
     session_regenerate_id(true);
     $_SESSION["status_login"] = true;
+    $_SESSION["id_user"]      = $user['id'];
     $_SESSION["username"]     = $username;
     $_SESSION["role"]         = $user['role'];
     if ($user['role'] == 'admin') {

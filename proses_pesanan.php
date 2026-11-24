@@ -75,9 +75,9 @@ try {
     $kembalian = $bayar - $total;
 
     // 3. Simpan pesanan
-    $kasir = $_SESSION['username'];
-    $stmt = mysqli_prepare($connection, "INSERT INTO pesanan (kasir, nama_pelanggan, total, metode_bayar, uang_bayar, kembalian, status) VALUES (?, ?, ?, ?, ?, ?, 'Lunas')");
-    mysqli_stmt_bind_param($stmt, "ssisii", $kasir, $pelanggan, $total, $metode, $bayar, $kembalian);
+    $id_kasir = $_SESSION['id_user'];
+    $stmt = mysqli_prepare($connection, "INSERT INTO pesanan (id_kasir, nama_pelanggan, total, metode_bayar, uang_bayar, kembalian, status) VALUES (?, ?, ?, ?, ?, ?, 'Lunas')");
+    mysqli_stmt_bind_param($stmt, "isisii", $id_kasir, $pelanggan, $total, $metode, $bayar, $kembalian);
     mysqli_stmt_execute($stmt);
     $id_pesanan = mysqli_insert_id($connection);
     mysqli_stmt_close($stmt);
