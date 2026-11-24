@@ -50,7 +50,7 @@ $halaman = 'laporan';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Laporan Pesanan - Nusantara Food</title>
+    <title>Laporan Pesanan - Jawa Food</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <style>@media print { nav, .no-print { display: none !important; } .collapse { display: table-row !important; } }</style>
 </head>
