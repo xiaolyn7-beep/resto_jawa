@@ -20,10 +20,13 @@ if ($user && password_verify($password_asli, $user['password'])) {
     $_SESSION["role"]         = $user['role'];
     if ($user['role'] == 'admin') {
         header("Location: dashboard.php");
+        exit();
     } else {
         header("Location: kasir.php");
+        exit();
     }
 } else {
     header("Location: index.php?pesan=salah");
+    exit();
 }
 ?>

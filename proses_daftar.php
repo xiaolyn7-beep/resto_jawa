@@ -1,7 +1,7 @@
 <?php
 include "koneksi.php";
 
-// Pastikan memang belum ada admin
+// pengecekan belum ada admin
 $cek = mysqli_query($connection, "SELECT COUNT(*) AS jumlah FROM users WHERE role = 'admin'");
 $data = mysqli_fetch_assoc($cek);
 if ($data['jumlah'] > 0) {
@@ -24,6 +24,7 @@ mysqli_stmt_bind_param($stmt, "ss", $username, $password_hash);
 
 if (mysqli_stmt_execute($stmt)) {
     header("Location: index.php?pesan=daftar_berhasil");
+    exit();
 } else {
     echo "Pendaftaran gagal: " . mysqli_error($connection);
 }

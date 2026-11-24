@@ -2,7 +2,7 @@
 session_start();
 include "koneksi.php";
 
-// Kalau sudah login, langsung ke halaman masing-masing
+// cek session admin atau kasir
 if (isset($_SESSION["status_login"])) {
     if ($_SESSION["role"] == "admin") {
         header("Location: dashboard.php");
@@ -12,7 +12,7 @@ if (isset($_SESSION["status_login"])) {
     exit();
 }
 
-// Cek apakah sudah ada akun admin
+// pengecekan akun admin
 $cek = mysqli_query($connection, "SELECT COUNT(*) AS jumlah FROM users WHERE role = 'admin'");
 $data = mysqli_fetch_assoc($cek);
 $belum_ada_admin = ($data['jumlah'] == 0);
